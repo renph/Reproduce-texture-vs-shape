@@ -49,11 +49,46 @@ pass
 ### stylized-ImageNet （SIN）
 基于ImageNet得到的新数据集。去除图像的纹理，并用随机的风格替代（使用AdaIN，如图3所示）。
 ## results
-### TEXTURE VS SHAPE BIAS IN HUMANS AND IMAGENET-TRAINED CNNS
+### 人类和IMAGENET训练的CNNS中的纹理和形状偏见（TEXTURE VS SHAPE BIAS）
+几乎所有图像都被正确识别。
+灰度图仍然同时含有形状和纹理信息，因此识别结果与使用原图一样好。
+在silhouette的图中，物体的边缘用黑色填充，CNN准确率比人类低很多。
+silhouette使得边缘刺激更为明显，这说明人类对少量纹理或没有纹理的图像表现更好。
+这些实验中的一个困惑是CNN往往不能很好地应对领域迁移（即对训练图片做较大的风格改动会显著降低表现）。
 
-### OVERCOMING THE TEXTURE BIAS OF CNNS
+因此，作者设计了一个cue conflict实验（即识别纹理与形状矛盾的图片），这样可以看出CNN主要依赖的特征。
+图4显示了实验结果。人类有一个显著的shape bias（95.9% 的准确率）。
+而CNN恰好相反，它有一个显著的texture bias。【具体数据】
 
-### ROBUSTNESS AND ACCURACY OF SHAPE-BASED REPRESENTATIONS
+### 克服CNN的 texture bias
+心理学实验表明CNN有显著的texture bias。
+其中一个原因可能是训练任务本身。可以只使用局部信息就在ImageNet上取得高准确率。
+换句话说，局部特征的组合就已经足够，而不需要整合和区分全局形状。
+为了验证这个假说，作者在stylized-ImageNet （SIN）数据集上训练了一个ResNet-50。
+
+ResNet-50训练效果见表1。作为对比，ResNet-50在ImageNet（IN）上有92.9%的Top-5准确率。
+这说明SIN是比IN更难的任务，因为图像纹理不再有参考价值。
+有趣的是，IN上得到的特征（feature）很难适用于SIN（只有16.4%的Top-5准确率）。
+反过来，SIN的特征在IN上有82.6%的准确率（未精细调参）。
+
+为了确定局部纹理特征是否足够用于解决SIN，作者评估了BagNet在其上的表现。【BagNet简介】
+9x9像素感受视野的BagNet在ImageNet（IN）上有70.0%的Top-5准确率，但在SIN上表现非常差，只有10.0%的Top-5准确率。
+这说明SIN的确去除了局部的纹理信息，以强迫网络整合大范围的空间信息（long-range spatial information）。
+
+更重要的是，在第6个实验中，基于SIN训练的ResNet-50有更强的形状偏见（shape bias）（如图5）。
+
+### 形状表示（shape-based representation）的准确率和鲁棒性
+增加形状偏见（shape bias），得到的shifted representation是否会影响CNN的鲁棒性或准确率？
+除了SIN和IN，作者额外分析了两个联合训练方案:
+1. 在SIN和IN上联合训练
+1. 在SIN和IN上联合训练，并用IN调参（下称Shape-ResNet）
+
+作者做了三个实验，将得到的模型与普通的ResNet-50比较（表2）。
+- IN上的表现。
+
+- 迁移学习（Pascal VOC 2007和MS COCO）。
+
+- 对扰乱的鲁棒性。
 
 ## discussion
 
