@@ -112,6 +112,8 @@ def train_model(model, criterion, optimizer, scheduler=None, num_epochs=25):
         if (epoch+1) % 20 == 0:
             torch.save(model.state_dict(), f'weights-{epoch}.pth')
             torch.save(optimizer.state_dict(), f'optimizer-{epoch}.pth')
+            torch.save(best_model_wts, f'best-weights.pth')
+
             print(train_sts)
             print(val_sts)
         print()
