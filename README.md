@@ -99,3 +99,7 @@ Shape-ResNet的表现比普通的ResNet好，说明SIN可能是有用的数据�
 1. 对CNN的特征表示和偏差（bias）有更深入的理解。
 1. 向获得更合理的人类视觉物体识别模型迈出了一步。 
 1. 这是未来工作的起点，其中的领域知识（domain knowledge）表明基于形状的表示可能比基于纹理的表示更有用。
+
+# 服务器登录
+ssh pr1y18@ssh.soton.ac.uk
+ssh pr1y18@yann.ecs.soton.ac.uk
