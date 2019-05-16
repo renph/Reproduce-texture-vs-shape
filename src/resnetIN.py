@@ -6,6 +6,7 @@ import torch.optim as optim
 from torch.optim import lr_scheduler
 
 from torchvision import datasets, models, transforms
+import numpy as np
 import matplotlib.pyplot as plt
 import time
 import os
@@ -43,12 +44,13 @@ class_names = image_datasets['train'].classes
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
-def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
+def train_model(model, criterion, optimizer, scheduler=None, num_epochs=25):
     since = time.time()
 
     best_model_wts = copy.deepcopy(model.state_dict())
     best_acc = 0.0
-
+    train_sts = np.zeros((2,num_epochs))
+    val_sts = np.zeros((2,num_epochs))
     for epoch in range(num_epochs):
         print('Epoch {}/{}'.format(epoch, num_epochs - 1))
         print('-' * 10)
@@ -56,7 +58,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
         # Each epoch has a training and validation phase
         for phase in ['train', 'val']:
             if phase == 'train':
-                scheduler.step()
+                # scheduler.step()
                 model.train()  # Set model to training mode
             else:
                 model.eval()   # Set model to evaluate mode
@@ -91,6 +93,11 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
             epoch_loss = running_loss / dataset_sizes[phase]
             epoch_acc = running_corrects.double() / dataset_sizes[phase]
 
+            if phase == 'train':
+                train_sts[:, epoch] = (epoch_loss, epoch_acc)
+            else:
+                val_sts[:, epoch] = (epoch_loss, epoch_acc)
+
             print('{} Loss: {:.4f} Acc: {:.4f}'.format(
                 phase, epoch_loss, epoch_acc))
 
@@ -108,50 +115,58 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
 
     # load best model weights
     model.load_state_dict(best_model_wts)
+
+    np.save('train.npy',train_sts)
+    np.save('val.npy',val_sts)
     return model
 
 
-# def visualize_model(model, num_images=6):
-#     was_training = model.training
-#     model.eval()
-#     images_so_far = 0
-#     fig = plt.figure()
-#
-#     with torch.no_grad():
-#         for i, (inputs, labels) in enumerate(dataloaders['val']):
-#             inputs = inputs.to(device)
-#             labels = labels.to(device)
-#
-#             outputs = model(inputs)
-#             _, preds = torch.max(outputs, 1)
-#
-#             for j in range(inputs.size()[0]):
-#                 images_so_far += 1
-#                 ax = plt.subplot(num_images//2, 2, images_so_far)
-#                 ax.axis('off')
-#                 ax.set_title('predicted: {}'.format(class_names[preds[j]]))
-#                 imshow(inputs.cpu().data[j])
-#
-#                 if images_so_far == num_images:
-#                     model.train(mode=was_training)
-#                     return
-#         model.train(mode=was_training)
+def eval_model(model, criterion):
+
+    model.eval()
+    phase = 'val'
+    with torch.no_grad():
+        running_loss = 0.0
+        running_corrects = 0
+
+        # Iterate over data.
+        for inputs, labels in tqdm(dataloaders[phase]):
+            inputs = inputs.to(device)
+            labels = labels.to(device)
+
+            # forward
+            # track history if only in train
+            with torch.set_grad_enabled(phase == 'train'):
+                outputs = model(inputs)
+                _, preds = torch.max(outputs, 1)
+                loss = criterion(outputs, labels)
+
+            # statistics
+            running_loss += loss.item() * inputs.size(0)
+            running_corrects += torch.sum(preds == labels.data)
+
+        epoch_loss = running_loss / dataset_sizes[phase]
+        epoch_acc = running_corrects.double() / dataset_sizes[phase]
+
+        print('{} Loss: {:.4f} Acc: {:.4f}'.format(
+            phase, epoch_loss, epoch_acc))
 
 if __name__ == '__main__':
+    model = models.resnet50(pretrained=False)
 
-    model_ft = models.resnet18(pretrained=True)
-    num_ftrs = model_ft.fc.in_features
-    model_ft.fc = nn.Linear(num_ftrs, 200)
-
-    model_ft = model_ft.to(device)
+    #     for param in model.parameters():
+    #         param.requires_grad = False
+    num_ftrs = model.fc.in_features
+    model.fc = nn.Linear(num_ftrs, 200)
+    model = model.to(device)
 
     criterion = nn.CrossEntropyLoss()
 
     # Observe that all parameters are being optimized
-    optimizer_ft = optim.SGD(model_ft.parameters(), lr=0.001, momentum=0.9)
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=1e-4)
 
     # Decay LR by a factor of 0.1 every 7 epochs
-    exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=7, gamma=0.1)
+    # exp_lr_scheduler = lr_scheduler.StepLR(optimizer, step_size=7, gamma=0.1)
 
-    model_ft = train_model(model_ft, criterion, optimizer_ft, exp_lr_scheduler,
-                           num_epochs=25)
+    model = train_model(model, criterion, optimizer, num_epochs=25)
+    torch.save(model.state_dict(), f'resnet50-IN.pth')
