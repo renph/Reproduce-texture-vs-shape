@@ -30,7 +30,7 @@ data_transforms = {
     ]),
 }
 
-data_dirs = [r'../', r'../input']
+data_dirs = [r'../input/imagenet16', r'../input/stylizedimagenet16']
 
 image_datasets = {
     x: torch.utils.data.ConcatDataset(
