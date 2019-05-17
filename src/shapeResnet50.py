@@ -167,7 +167,7 @@ if __name__ == '__main__':
     #     for param in model.parameters():
     #         param.requires_grad = False
     num_ftrs = model.fc.in_features
-    model.fc = nn.Linear(num_ftrs, 200)
+    model.fc = nn.Linear(num_ftrs, 16)
     model = model.to(device)
 
     criterion = nn.CrossEntropyLoss()
@@ -178,6 +178,6 @@ if __name__ == '__main__':
     # Decay LR by a factor of 0.1 every 7 epochs
     # exp_lr_scheduler = lr_scheduler.StepLR(optimizer, step_size=7, gamma=0.1)
 
-    model = train_model(model, criterion, optimizer, num_epochs=50)
+    model = train_model(model, criterion, optimizer, num_epochs=100)
     torch.save(model.state_dict(), f'weights.pth')
     torch.save(optimizer.state_dict(), f'optimizer.pth')

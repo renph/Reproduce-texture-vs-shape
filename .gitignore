@@ -353,3 +353,4 @@ TSWLatexianTemp*
 *.spl
 
 .idea
+input/*

@@ -31,7 +31,7 @@ data_transforms = {
     ]),
 }
 
-data_dir = r'../'
+data_dir = r'../input/stylizedimagenet16'
 image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x),
                                           data_transforms[x])
                   for x in ['train', 'val']}
@@ -152,7 +152,10 @@ def eval_model(model, criterion):
             phase, epoch_loss, epoch_acc))
 
 if __name__ == '__main__':
-    model = models.resnet50(pretrained=False)
+    import bagnets.pytorch
+
+    model = bagnets.pytorch.bagnet17(pretrained=False)
+    # model = models.resnet50(pretrained=False)
 
     #     for param in model.parameters():
     #         param.requires_grad = False
@@ -168,5 +171,5 @@ if __name__ == '__main__':
     # Decay LR by a factor of 0.1 every 7 epochs
     # exp_lr_scheduler = lr_scheduler.StepLR(optimizer, step_size=7, gamma=0.1)
 
-    model = train_model(model, criterion, optimizer, num_epochs=25)
-    torch.save(model.state_dict(), f'resnet50-IN.pth')
+    model = train_model(model, criterion, optimizer, num_epochs=50)
+    torch.save(model.state_dict(), f'bagnet9-IN.pth')
