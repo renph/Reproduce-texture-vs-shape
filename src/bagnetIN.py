@@ -35,7 +35,7 @@ data_dir = r'../input/stylizedimagenet16'
 image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x),
                                           data_transforms[x])
                   for x in ['train', 'val']}
-dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=32,
+dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=2,
                                              shuffle=True, num_workers=4)
               for x in ['train', 'val']}
 dataset_sizes = {x: len(image_datasets[x]) for x in ['train', 'val']}
@@ -154,7 +154,7 @@ def eval_model(model, criterion):
 if __name__ == '__main__':
     import bagnets.pytorch
 
-    model = bagnets.pytorch.bagnet17(pretrained=False)
+    model = bagnets.pytorch.bagnet9(pretrained=False)
     # model = models.resnet50(pretrained=False)
 
     #     for param in model.parameters():
