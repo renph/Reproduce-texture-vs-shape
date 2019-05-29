@@ -155,10 +155,6 @@ if __name__ == '__main__':
     import bagnets.pytorch
 
     model = bagnets.pytorch.bagnet9(pretrained=False)
-    # model = models.resnet50(pretrained=False)
-
-    #     for param in model.parameters():
-    #         param.requires_grad = False
     num_ftrs = model.fc.in_features
     model.fc = nn.Linear(num_ftrs, 16)
     model = model.to(device)
@@ -167,9 +163,6 @@ if __name__ == '__main__':
 
     # Observe that all parameters are being optimized
     optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=1e-4)
-
-    # Decay LR by a factor of 0.1 every 7 epochs
-    # exp_lr_scheduler = lr_scheduler.StepLR(optimizer, step_size=7, gamma=0.1)
 
     model = train_model(model, criterion, optimizer, num_epochs=50)
     torch.save(model.state_dict(), f'bagnet9-IN.pth')

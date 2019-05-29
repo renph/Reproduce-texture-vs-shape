@@ -173,7 +173,7 @@ if __name__ == '__main__':
     criterion = nn.CrossEntropyLoss()
 
     # Observe that all parameters are being optimized
-    optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9)
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=1e-4)
 
     model = train_model(model, criterion, optimizer, num_epochs=50)
     torch.save(model.state_dict(), f'weights.pth')

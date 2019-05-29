@@ -163,10 +163,6 @@ if __name__ == '__main__':
     criterion = nn.CrossEntropyLoss()
 
     # Observe that all parameters are being optimized
-    optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=1e-4)
-
-    # Decay LR by a factor of 0.1 every 7 epochs
-    # exp_lr_scheduler = lr_scheduler.StepLR(optimizer, step_size=7, gamma=0.1)
-
-    model = train_model(model, criterion, optimizer, num_epochs=25)
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9,weight_decay=1e-4)
+    model = train_model(model, criterion, optimizer, num_epochs=50)
     torch.save(model.state_dict(), f'resnet50-IN.pth')
