@@ -99,4 +99,4 @@ if __name__ == '__main__':
 
     criterion = top5
 
-    res = eval_model(model, criterion)
+    eval_model(model, criterion)
