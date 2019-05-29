@@ -1,4 +1,5 @@
 
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -30,14 +31,10 @@ data_transforms = {
     ]),
 }
 
-data_dirs = [r'../input/imagenet16', r'../input/stylizedimagenet16']
-
-image_datasets = {
-    x: torch.utils.data.ConcatDataset(
-        [datasets.ImageFolder(os.path.join(data_dir, x), data_transforms[x])
-            for data_dir in data_dirs])
-                for x in ['train', 'val']
-}
+data_dir = r'../'
+image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x),
+                                          data_transforms[x])
+                  for x in ['train', 'val']}
 
 dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=32,
                                              shuffle=True, num_workers=4)
@@ -163,21 +160,20 @@ def eval_model(model, criterion):
 
 if __name__ == '__main__':
     model = models.resnet50(pretrained=False)
-
     #     for param in model.parameters():
     #         param.requires_grad = False
     num_ftrs = model.fc.in_features
     model.fc = nn.Linear(num_ftrs, 16)
+    model.load_state_dict(torch.load('../input/shape-resnet/weights.pth'))
     model = model.to(device)
 
     criterion = nn.CrossEntropyLoss()
 
     # Observe that all parameters are being optimized
-    optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=1e-4)
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9, weight_decay=1e-4)
 
     # Decay LR by a factor of 0.1 every 7 epochs
-    # exp_lr_scheduler = lr_scheduler.StepLR(optimizer, step_size=7, gamma=0.1)
+    exp_lr_scheduler = lr_scheduler.StepLR(optimizer, step_size=25, gamma=0.1)
 
-    model = train_model(model, criterion, optimizer, num_epochs=100)
-    torch.save(model.state_dict(), f'weights.pth')
-    torch.save(optimizer.state_dict(), f'optimizer.pth')
+    model = train_model(model, criterion, optimizer, exp_lr_scheduler, num_epochs=50)
+    torch.save(model.state_dict(), f'resnet50-SIN-IN.pth')
