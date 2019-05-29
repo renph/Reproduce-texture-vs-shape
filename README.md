@@ -11,3 +11,4 @@ All codes except the style transfer are written by the two authors.
 Datasets can be downloaded from [imagenet-16](https://www.kaggle.com/davidddxu/imagenet16) 
 and [stylizedimagenet-16](https://www.kaggle.com/davidddxu/stylizedimagenet16).
 
+Code for style transfer using AdaIN can be found here ([stylize-datasets](https://github.com/Hvitgar/stylize-datasets)).
