@@ -14,7 +14,7 @@ A subset of ImageNet (only 16 classes), referred as IN-16, and stylized IN-16, r
 The figure below shows an example of stylized images.
 ![Stylized Dataset](report/img/bear.png)
 
-In stylized images, original texture is replace by another random texture, only the shape is preserved.
+In a stylized image, original texture is replace by another random texture, only the shape is preserved.
 Datasets can be downloaded from [imagenet-16](https://www.kaggle.com/davidddxu/imagenet16) 
 and [stylizedimagenet-16](https://www.kaggle.com/davidddxu/stylizedimagenet16).
 
