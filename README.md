@@ -10,7 +10,7 @@ We found that ResNet-50 trained on Stylized ImageNet is more accurate and robust
 All codes except the style transfer are written by the two authors.
 
 ## Dataset
-A subset of ImageNet (only 16 classes), referred as IN-16, and stylized IN-16, referred as SIN-16, are used as raw input for training.
+A subset of ImageNet (only 16 classes), referred as IN-16, and stylized IN-16, referred as SIN-16, are used as raw inputs for training.
 The figure below shows an example of stylized images.
 ![Stylized Dataset](report/img/bear.png)
 
@@ -27,7 +27,7 @@ The table below (taken from the original paper) shows detailed results.
 ## Results
 ### Accuracy
 The table below shows the performance of a Res-50 network when trained on various datasets.
-The model trained on SIN+IN dataset and fine-tuned using IN achieved a significantly better performance (both top-1 and top-5 accuracy) than other models.
+The model trained on SIN+IN dataset and fine-tuned using IN achieved a significantly better performance (on both top-1 and top-5 accuracy) than other models.
 
 ![Results](report/img/results.png)
 
@@ -37,4 +37,4 @@ Models trained on SIN tend to be more robust than those trained on IN.
 ![Robustness](report/img/noise.png)
 ## Conclusion
 Stylizing a whole dataset can be seen as a data augmentation method, which expands the dataset and helps capture shape representations. 
-Deep CNNs trained on Stylized dataset tend to be more accurate and robust.
+Deep CNNs trained on stylized dataset tend to be more accurate and robust.
